@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -45,6 +44,13 @@ public class Message {
     private LocalDateTime timestamp;
 
     /**
+     * Flag indicating if the message has been edited.
+     * Only AI messages can be edited.
+     */
+    @Column(nullable = false)
+    private Boolean edited = false;
+
+    /**
      * Reference to the parent Chat.
      * Many-to-one relationship with Chat entity.
      */
@@ -58,6 +64,9 @@ public class Message {
     @PrePersist
     protected void onCreate() {
         timestamp = LocalDateTime.now();
+        if (edited == null) {
+            edited = false;
+        }
     }
 }
 
