@@ -2,6 +2,8 @@ package mk.ukim.finki.wp.chatbotproject.service;
 
 import mk.ukim.finki.wp.chatbotproject.models.Chat;
 
+import java.util.List;
+
 /**
  * Service interface for Chat operations.
  */
@@ -20,9 +22,16 @@ public interface ChatService {
      *
      * @param id the ID of the chat
      * @return the Chat entity
-     * @throws jakarta.persistence.EntityNotFoundException if not found
+     * @throws IllegalArgumentException if not found
      */
     Chat getChatById(Long id);
+
+    /**
+     * Retrieve all chats.
+     *
+     * @return list of all Chat entities
+     */
+    List<Chat> getAllChats();
 
     /**
      * Send a message in a chat.
@@ -37,5 +46,15 @@ public interface ChatService {
      * @throws IllegalArgumentException if chat not found
      */
     Chat sendMessage(Long chatId, String userInput);
+
+    /**
+     * Delete a chat and all its associated messages.
+     *
+     * @param chatId the ID of the chat to delete
+     * @throws IllegalArgumentException if chat not found
+     */
+    void deleteChat(Long chatId);
 }
+
+
 

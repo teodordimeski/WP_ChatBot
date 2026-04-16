@@ -46,6 +46,12 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Chat> getAllChats() {
+        return chatRepository.findAll();
+    }
+
+    @Override
     public Chat sendMessage(Long chatId, String userInput) {
         // Retrieve the chat
         Chat chat = getChatById(chatId);
@@ -64,6 +70,12 @@ public class ChatServiceImpl implements ChatService {
 
         // Return the updated chat
         return getChatById(chatId);
+    }
+
+    @Override
+    public void deleteChat(Long chatId) {
+        Chat chat = getChatById(chatId);
+        chatRepository.delete(chat);
     }
 }
 
