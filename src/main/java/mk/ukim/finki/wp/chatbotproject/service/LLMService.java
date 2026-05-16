@@ -28,5 +28,5 @@ public interface LLMService {
      * @param onChunk callback that receives each chunk of the response
      * @return the complete generated response
      */
-    String generateResponseStream(List<Message> messages, Consumer<String> onChunk);
+    //String generateResponseStream(List<Message> messages, Consumer<String> onChunk);
 }
