@@ -6,6 +6,7 @@ import mk.ukim.finki.wp.chatbotproject.models.Role;
 import mk.ukim.finki.wp.chatbotproject.models.User;
 import mk.ukim.finki.wp.chatbotproject.repository.ChatRepository;
 import mk.ukim.finki.wp.chatbotproject.service.ChatService;
+import mk.ukim.finki.wp.chatbotproject.service.KnowledgeTools;
 import mk.ukim.finki.wp.chatbotproject.service.LLMService;
 import mk.ukim.finki.wp.chatbotproject.service.MessageService;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,13 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final MessageService messageService;
     private final LLMService llmService;
+    private final KnowledgeTools knowledgeTools;
 
-    public ChatServiceImpl(ChatRepository chatRepository, MessageService messageService, LLMService llmService) {
+    public ChatServiceImpl(ChatRepository chatRepository, MessageService messageService, LLMService llmService, KnowledgeTools knowledgeTools) {
         this.chatRepository = chatRepository;
         this.messageService = messageService;
         this.llmService = llmService;
+        this.knowledgeTools = knowledgeTools;
     }
 
     @Override
@@ -59,11 +62,16 @@ public class ChatServiceImpl implements ChatService {
         // Step 1: Fetch chat and save user message (in transaction)
         Chat chat = saveChatUserMessage(chatId, user, userInput);
 
-        // Step 2: Generate AI response
-        String aiResponse = llmService.generateResponse(messageService.getMessagesByChat(chatId));
+        // Step 2: Generate AI response with knowledge tools
+        String aiResponse = llmService.generateResponse(messageService.getMessagesByChat(chatId), knowledgeTools);
 
         // Step 3: Save AI response (in new transaction)
         messageService.saveMessage(chat, Role.AI, aiResponse);
+
+        // Step 4: Save to knowledge base if response is valid
+        if (!aiResponse.startsWith("Error")) {
+            knowledgeTools.saveKnowledge(userInput, aiResponse);
+        }
 
         // Return the updated chat
         return getChatById(chatId, user);
