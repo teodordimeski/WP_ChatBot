@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,5 +35,15 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      */
     @Query("SELECT m FROM Message m WHERE m.chat.id = :chatId AND m.role = :role ORDER BY m.timestamp DESC LIMIT 1")
     Optional<Message> findLastMessageByChat(@Param("chatId") Long chatId, @Param("role") Role role);
+
+    /**
+     * Find the most recent USER message in a chat that came before the given timestamp.
+     *
+     * @param chat the Chat entity to search in
+     * @param timestamp the timestamp to search before
+     * @return the most recent USER message before the given timestamp
+     */
+    @Query("SELECT m FROM Message m WHERE m.chat = :chat AND m.role = :role AND m.timestamp < :timestamp ORDER BY m.timestamp DESC LIMIT 1")
+    Optional<Message> findMostRecentUserMessageBefore(@Param("chat") Chat chat, @Param("role") Role role, @Param("timestamp") LocalDateTime timestamp);
 }
 
