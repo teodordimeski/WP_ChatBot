@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,15 @@ import java.util.Optional;
  */
 @Repository
 public interface SharedKnowledgeRepository extends JpaRepository<SharedKnowledge, Long> {
+
+    /**
+     * Find all knowledge entries created after the given timestamp.
+     * Used for TTL-scoped semantic retrieval (last 2 days).
+     *
+     * @param after minimum creation timestamp (exclusive lower bound)
+     * @return list of recent knowledge entries
+     */
+    List<SharedKnowledge> findAllByCreatedAtAfter(LocalDateTime after);
 
     /**
      * Search for knowledge entries by question using case-insensitive LIKE.
