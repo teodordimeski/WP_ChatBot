@@ -39,6 +39,18 @@ public class SharedKnowledge {
     private String answer;
 
     /**
+     * Embedding vector serialized as JSON for semantic search.
+     */
+    @Column(columnDefinition = "TEXT")
+    private String embedding;
+
+    /**
+     * Extracted entities serialized as JSON for entity-aware cache validation.
+     */
+    @Column(columnDefinition = "TEXT")
+    private String entities;
+
+    /**
      * Timestamp when this knowledge entry was created.
      */
     @Column(nullable = false, updatable = false)
